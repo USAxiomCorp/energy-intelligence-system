@@ -2463,197 +2463,115 @@ class KernelStorage:
 # SECTION 2: R3 CYCLE - COMPRESS → VERIFY → STORE → RESYNTHESIZE → REINFORCE
 # =============================================================================
 
-class R3Cycle:
+           class R3Cycle:
     """
     R3 CYCLE - RECURSIVE RESONANCE REINFORCEMENT
     =============================================
     
     COMPRESS → VERIFY → STORE → RESYNTHESIZE → REINFORCE
-    
-    Each iteration improves the system.
     """
     
     def __init__(self, axiom_registry, reasoning_engine, meta_system):
         self.axiom_registry = axiom_registry
         self.reasoning_engine = reasoning_engine
         self.meta_system = meta_system
-        
-        # Storage
         self.storage = KernelStorage(max_kernels=10)
-        
-        # Cycle tracking
         self.cycles_completed = 0
         self.coherence_history = []
         self.iteration_log = []
-        
-        # Metrics
         self.best_coherence = 0.0
         self.improvement_rate = 0.0
     
-def compress(self, system_state):
-    print("\n  [R3: COMPRESS]")
-    compressed = {
-        "axioms": [],
-        "primitives": [],
-        "concepts": [],
-        "meta_state": {}
-    }
-    for axiom_id in self.axiom_registry.axioms:
-        axiom = self.axiom_registry.axioms[axiom_id]
-        compressed["axioms"].append({
-            "id": axiom_id,
-            "verified": axiom.verified if hasattr(axiom, 'verified') else axiom.get('verified', 0),
-            "charge": axiom.metaphysical_charge if hasattr(axiom, 'metaphysical_charge') else axiom.get('metaphysical_charge', 0)
-        })
-    for prim_id in self.reasoning_engine.primitives:
-        primitive = self.reasoning_engine.primitives[prim_id]
-        compressed["primitives"].append({
-            "id": prim_id,
-            "available": primitive.verified if hasattr(primitive, 'verified') else primitive.get('verified', 0)
-        })
-    for con_id in self.reasoning_engine.concepts:
-        concept = self.reasoning_engine.concepts[con_id]
-        compressed["concepts"].append({
-            "id": con_id,
-            "built": concept.built if hasattr(concept, 'built') else concept.get('built', 0)
-        })
-    if self.meta_system:
-        summary = self.meta_system.get_summary()
-        compressed["meta_state"] = {
-            "coherence": summary.get("current_coherence", 0.0),
-            "stability": summary.get("stability_ratio", 0.0),
-            "grounding_strength": summary.get("grounding_strength", 0.0)
+    def compress(self, system_state):
+        print("\n  [R3: COMPRESS]")
+        compressed = {
+            "axioms": [],
+            "primitives": [],
+            "concepts": [],
+            "meta_state": {}
         }
-    print(f"    Compressed {len(compressed['axioms'])} axioms, " +
-          f"{len(compressed['primitives'])} primitives, " +
-          f"{len(compressed['concepts'])} concepts")
-    return compressed
-
+        for axiom_id in self.axiom_registry.axioms:
+            axiom = self.axiom_registry.axioms[axiom_id]
+            compressed["axioms"].append({
+                "id": axiom_id,
+                "verified": axiom.verified if hasattr(axiom, 'verified') else axiom.get('verified', 0),
+                "charge": axiom.metaphysical_charge if hasattr(axiom, 'metaphysical_charge') else axiom.get('metaphysical_charge', 0)
+            })
+        for prim_id in self.reasoning_engine.primitives:
+            primitive = self.reasoning_engine.primitives[prim_id]
+            compressed["primitives"].append({
+                "id": prim_id,
+                "available": primitive.verified if hasattr(primitive, 'verified') else primitive.get('verified', 0)
+            })
+        for con_id in self.reasoning_engine.concepts:
+            concept = self.reasoning_engine.concepts[con_id]
+            compressed["concepts"].append({
+                "id": con_id,
+                "built": concept.built if hasattr(concept, 'built') else concept.get('built', 0)
+            })
+        if self.meta_system:
+            summary = self.meta_system.get_summary()
+            compressed["meta_state"] = {
+                "coherence": summary.get("current_coherence", 0.0),
+                "stability": summary.get("stability_ratio", 0.0),
+                "grounding_strength": summary.get("grounding_strength", 0.0)
+            }
+        print(f"    Compressed {len(compressed['axioms'])} axioms, " +
+              f"{len(compressed['primitives'])} primitives, " +
+              f"{len(compressed['concepts'])} concepts")
+        return compressed
     
     def verify(self, compressed):
-        """
-        STEP 2: VERIFY
-        ==============
-        
-        Verify compressed data against system integrity.
-        """
         print("\n  [R3: VERIFY]")
-        
-        verification = {
-            "passed": 0,
-            "failed": 0,
-            "checks": []
-        }
-        
-        # Check 1: Axioms properly grounded
+        verification = {"passed": 0, "failed": 0, "checks": []}
         for axiom_data in compressed["axioms"]:
             if axiom_data["verified"] == 1:
-                verification["passed"] = verification["passed"] + 1
-                verification["checks"].append({
-                    "type": "axiom",
-                    "id": axiom_data["id"],
-                    "status": "verified"
-                })
+                verification["passed"] += 1
+                verification["checks"].append({"type": "axiom", "id": axiom_data["id"], "status": "verified"})
             else:
-                verification["failed"] = verification["failed"] + 1
-                verification["checks"].append({
-                    "type": "axiom",
-                    "id": axiom_data["id"],
-                    "status": "unverified"
-                })
-        
-        # Check 2: Primitives grounded to axioms
+                verification["failed"] += 1
+                verification["checks"].append({"type": "axiom", "id": axiom_data["id"], "status": "unverified"})
         for prim_data in compressed["primitives"]:
             if prim_data["available"] == 1:
-                verification["passed"] = verification["passed"] + 1
-                verification["checks"].append({
-                    "type": "primitive",
-                    "id": prim_data["id"],
-                    "status": "available"
-                })
+                verification["passed"] += 1
+                verification["checks"].append({"type": "primitive", "id": prim_data["id"], "status": "available"})
             else:
-                verification["failed"] = verification["failed"] + 1
-                verification["checks"].append({
-                    "type": "primitive",
-                    "id": prim_data["id"],
-                    "status": "unavailable"
-                })
-        
-        # Check 3: Concepts built from primitives
+                verification["failed"] += 1
+                verification["checks"].append({"type": "primitive", "id": prim_data["id"], "status": "unavailable"})
         for con_data in compressed["concepts"]:
             if con_data["built"] == 1:
-                verification["passed"] = verification["passed"] + 1
-                verification["checks"].append({
-                    "type": "concept",
-                    "id": con_data["id"],
-                    "status": "built"
-                })
+                verification["passed"] += 1
+                verification["checks"].append({"type": "concept", "id": con_data["id"], "status": "built"})
             else:
-                verification["failed"] = verification["failed"] + 1
-                verification["checks"].append({
-                    "type": "concept",
-                    "id": con_data["id"],
-                    "status": "not_built"
-                })
-        
-        # Compute verification score
+                verification["failed"] += 1
+                verification["checks"].append({"type": "concept", "id": con_data["id"], "status": "not_built"})
         total_checks = verification["passed"] + verification["failed"]
-        if total_checks > 0:
-            verification["score"] = verification["passed"] / total_checks
-        else:
-            verification["score"] = 0.0
-        
-        print(f"    Verified: {verification['passed']}/{total_checks} " +
-              f"({verification['score']:.2%})")
-        
+        verification["score"] = verification["passed"] / total_checks if total_checks > 0 else 0.0
+        print(f"    Verified: {verification['passed']}/{total_checks} ({verification['score']:.2%})")
         return verification
     
     def store(self, compressed, verification):
-        """
-        STEP 3: STORE
-        =============
-        
-        Store compressed kernel in context window.
-        """
         print("\n  [R3: STORE]")
-        
-        # Prepare kernel data
         kernel_data = {
             "compressed": compressed,
             "verification": verification,
             "cycle": self.cycles_completed + 1,
             "timestamp": 20260622
         }
-        
-        # Store with priority based on verification score
         coherence = verification.get("score", 0.5)
         kernel_hash = self.storage.store_kernel(kernel_data, coherence)
-        
         print(f"    Stored kernel: {kernel_hash}")
         print(f"    Total kernels: {len(self.storage.kernels)}")
-        
         return kernel_hash
     
     def resynthesize(self, kernel_hash):
-        """
-        STEP 4: RESYNTHESIZE
-        ====================
-        
-        Resynthesize system from stored kernel.
-        """
         print("\n  [R3: RESYNTHESIZE]")
-        
-        # Access kernel
         kernel = self.storage.access_kernel(kernel_hash)
-        
         if kernel is None:
             print("    ⚠️  Kernel not found!")
             return None
-        
         compressed = kernel["compressed"]
         verification = kernel["verification"]
-        
-        # Build resynthesized system
         resynthesized = {
             "axioms": [],
             "primitives": [],
@@ -2662,97 +2580,52 @@ def compress(self, system_state):
             "coherence": verification.get("score", 0.0),
             "cycle": kernel.get("cycle", 0)
         }
-        
-        # Resynthesize axioms
         for axiom_data in compressed["axioms"]:
             resynthesized["axioms"].append(axiom_data["id"])
-        
-        # Resynthesize primitives
         for prim_data in compressed["primitives"]:
             if prim_data["available"] == 1:
                 resynthesized["primitives"].append(prim_data["id"])
-        
-        # Resynthesize concepts
         for con_data in compressed["concepts"]:
             if con_data["built"] == 1:
                 resynthesized["concepts"].append(con_data["id"])
-        
-        # Resynthesize meta-state
         resynthesized["meta_state"] = compressed.get("meta_state", {})
-        
         print(f"    Resynthesized: {len(resynthesized['axioms'])} axioms, " +
               f"{len(resynthesized['primitives'])} primitives, " +
               f"{len(resynthesized['concepts'])} concepts")
         print(f"    Coherence: {resynthesized['coherence']:.2%}")
-        
         return resynthesized
     
     def reinforce(self, resynthesized):
-        """
-        STEP 5: REINFORCE
-        =================
-        
-        Reinforce the system by filling missing layers.
-        """
         print("\n  [R3: REINFORCE]")
-        
         layers_added = 0
         improvements = []
-        
-        # Check axiom layer
         current_axioms = len(resynthesized["axioms"])
         expected_axioms = len(self.axiom_registry.axioms)
-        
         if current_axioms < expected_axioms:
-            # Fill missing axioms
             missing = expected_axioms - current_axioms
-            layers_added = layers_added + missing
+            layers_added += missing
             improvements.append(f"Added {missing} axioms")
             print(f"    🔄 Filling missing axioms: +{missing}")
-        
-        # Check primitive layer
         current_primitives = len(resynthesized["primitives"])
         expected_primitives = len(self.reasoning_engine.primitives)
-        
         if current_primitives < expected_primitives:
-            # Fill missing primitives
             missing = expected_primitives - current_primitives
-            layers_added = layers_added + missing
+            layers_added += missing
             improvements.append(f"Added {missing} primitives")
             print(f"    🔄 Filling missing primitives: +{missing}")
-        
-        # Check concept layer
         current_concepts = len(resynthesized["concepts"])
         expected_concepts = len(self.reasoning_engine.concepts)
-        
         if current_concepts < expected_concepts:
-            # Fill missing concepts
             missing = expected_concepts - current_concepts
-            layers_added = layers_added + missing
+            layers_added += missing
             improvements.append(f"Added {missing} concepts")
             print(f"    🔄 Filling missing concepts: +{missing}")
-        
-        # Compute reinforcement score
-        if expected_axioms > 0:
-            axiom_completeness = current_axioms / expected_axioms
-        else:
-            axiom_completeness = 1.0
-        
-        if expected_primitives > 0:
-            prim_completeness = current_primitives / expected_primitives
-        else:
-            prim_completeness = 1.0
-        
-        if expected_concepts > 0:
-            con_completeness = current_concepts / expected_concepts
-        else:
-            con_completeness = 1.0
-        
+        axiom_completeness = current_axioms / expected_axioms if expected_axioms > 0 else 1.0
+        prim_completeness = current_primitives / expected_primitives if expected_primitives > 0 else 1.0
+        con_completeness = current_concepts / expected_concepts if expected_concepts > 0 else 1.0
         reinforcement_score = (axiom_completeness + prim_completeness + con_completeness) / 3.0
-        
         print(f"    Reinforcement Score: {reinforcement_score:.2%}")
         print(f"    Layers Added: {layers_added}")
-        
         return {
             "reinforced": resynthesized,
             "layers_added": layers_added,
@@ -2764,44 +2637,24 @@ def compress(self, system_state):
         """
         RUN COMPLETE R3 CYCLE
         =====================
-        
         COMPRESS → VERIFY → STORE → RESYNTHESIZE → REINFORCE
         """
         print("\n" + "="*70)
         print(f"R3 CYCLE #{self.cycles_completed + 1}")
         print("="*70)
-        
-        # STEP 1: Compress
         compressed = self.compress(system_state)
-        
-        # STEP 2: Verify
         verification = self.verify(compressed)
-        
-        # STEP 3: Store
         kernel_hash = self.store(compressed, verification)
-        
-        # STEP 4: Resynthesize
         resynthesized = self.resynthesize(kernel_hash)
-        
         if resynthesized is None:
             print("  ❌ Resynthesis failed!")
             return None
-        
-        # STEP 5: Reinforce
         reinforced = self.reinforce(resynthesized)
-        
-        # Update cycle tracking
-        self.cycles_completed = self.cycles_completed + 1
-        
-        # Track coherence
+        self.cycles_completed += 1
         coherence = reinforced["score"]
         self.coherence_history.append(coherence)
-        
-        # Update best coherence
         if coherence > self.best_coherence:
             self.best_coherence = coherence
-        
-        # Compute improvement rate
         if len(self.coherence_history) >= 2:
             prev = self.coherence_history[-2]
             curr = self.coherence_history[-1]
@@ -2809,8 +2662,6 @@ def compress(self, system_state):
             if improvement < 0:
                 improvement = 0
             self.improvement_rate = improvement
-        
-        # Log iteration
         self.iteration_log.append({
             "cycle": self.cycles_completed,
             "coherence": coherence,
@@ -2818,7 +2669,6 @@ def compress(self, system_state):
             "improvements": reinforced["improvements"],
             "kernel_hash": kernel_hash
         })
-        
         print("\n" + "="*70)
         print(f"R3 CYCLE #{self.cycles_completed} COMPLETE")
         print("="*70)
@@ -2826,9 +2676,9 @@ def compress(self, system_state):
         print(f"  Best Coherence: {self.best_coherence:.2%}")
         print(f"  Layers Added: {reinforced['layers_added']}")
         print(f"  Improvement: {self.improvement_rate:.2%}")
+        return reinforced     
         
-        return reinforced
-
+        
 
 # =============================================================================
 # SECTION 3: REFINEMENT METRICS

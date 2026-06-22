@@ -3031,4 +3031,23 @@ def run_complete_self_improving_system():
 # =============================================================================
 
 if __name__ == "__main__":
-    run_complete_self_improving_system()
+    print("🔥 ENERGY R3 - Starting System")
+    meta_root = MetaRoot()
+    axioms = create_energy_axioms()
+    registry = AxiomRegistry(meta_root)
+    for axiom_id in axioms:
+        registry.register(axioms[axiom_id])
+    context = {
+        "energy_conserved": 1, "losses_positive": 1, "value_positive": 1,
+        "market_exists": 1, "pricing_transparent": 1, "fair_distribution": 1,
+        "supply_meets_demand": 1, "system_stable": 1,
+        "regulation_exists": 1, "enforcement_active": 1,
+        "energy_in": 100, "energy_out": 85, "energy_stored": 15,
+        "value_created": 100, "value_destroyed": 90,
+        "benefit_a": 50, "benefit_b": 48,
+        "system_up": 950, "system_total": 1000
+    }
+    verified = registry.verify_all(context)
+    print(f"✅ Axioms Verified: {verified}/7")
+    print(f"✅ Coherence: {registry.compute_coherence():.2%}")
+    print("🔥 System Ready")

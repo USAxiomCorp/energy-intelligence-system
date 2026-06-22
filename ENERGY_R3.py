@@ -2208,7 +2208,6 @@ if __name__ == "__main__":
     
     # LOAD MODULE 1: Axioms + Registry
     print("\n[LOADING MODULE 1]")
-    from module_1_axioms import MetaRoot, create_energy_axioms, AxiomRegistry
     
     meta_root = MetaRoot()
     axioms = create_energy_axioms()

@@ -3030,51 +3030,61 @@ def run_complete_self_improving_system():
 # MAIN ENTRY POINT
 # =============================================================================
 
+# =============================================================================
+# WEB SERVER FOR RENDER - Keep the process alive
+# =============================================================================
+
 if __name__ == "__main__":
     print("🚀 ENERGY R3 - Starting System...")
     
-    # Create meta-root
+    # Run your system initialization
     meta_root = MetaRoot()
-    
-    # Create axioms
     axioms = create_energy_axioms()
-    
-    # Create registry
     registry = AxiomRegistry(meta_root)
     for axiom_id in axioms:
         registry.register(axioms[axiom_id])
     
-    # Verify
     context = {
-        "energy_conserved": 1,
-        "losses_positive": 1,
-        "value_positive": 1,
-        "market_exists": 1,
-        "pricing_transparent": 1,
-        "fair_distribution": 1,
-        "supply_meets_demand": 1,
-        "system_stable": 1,
-        "regulation_exists": 1,
-        "enforcement_active": 1,
-        "energy_in": 100,
-        "energy_out": 85,
-        "energy_stored": 15,
-        "value_created": 100,
-        "value_destroyed": 90,
-        "benefit_a": 50,
-        "benefit_b": 48,
-        "system_up": 950,
-        "system_total": 1000
+        "energy_conserved": 1, "losses_positive": 1, "value_positive": 1,
+        "market_exists": 1, "pricing_transparent": 1, "fair_distribution": 1,
+        "supply_meets_demand": 1, "system_stable": 1,
+        "regulation_exists": 1, "enforcement_active": 1,
+        "energy_in": 100, "energy_out": 85, "energy_stored": 15,
+        "value_created": 100, "value_destroyed": 90,
+        "benefit_a": 50, "benefit_b": 48,
+        "system_up": 950, "system_total": 1000
     }
     
     verified = registry.verify_all(context)
     coherence = registry.compute_coherence()
-    
     print(f"✅ Axioms Verified: {verified}/7")
     print(f"✅ Coherence: {coherence:.2%}")
-    print(f"✅ System Ready")
+    print("✅ System Ready")
     
-    # Keep the process alive for Render
-    import time
-    while True:
-        time.sleep(60)
+    # ============================================================
+    # WEB SERVER - KEEPS THE PROCESS ALIVE FOR RENDER
+    # ============================================================
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+    import json
+    import os
+    
+    class HealthHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {
+                "status": "running",
+                "axioms_verified": verified,
+                "total_axioms": 7,
+                "coherence": coherence
+            }
+            self.wfile.write(json.dumps(response).encode())
+        
+        def log_message(self, format, *args):
+            pass  # Suppress logs
+    
+    port = int(os.environ.get("PORT", 8000))
+    print(f"🌐 Web server running on port {port}")
+    print(f"   /health - health check")
+    HTTPServer(('0.0.0.0', port), HealthHandler).serve_forever()

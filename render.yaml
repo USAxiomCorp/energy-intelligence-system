@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: energy-r3-intelligence
+    runtime: python
+    plan: free
+    autoDeploy: true
+    buildCommand: |
+      echo "No build required - Pure Python"
+      echo "System: ENERGY R3 Intelligence"
+    startCommand: |
+      python ENERGY_R3.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SYSTEM_TYPE
+        value: energy_intelligence
+      - key: MAX_KERNELS
+        value: "10"
+      - key: RENDER
+        value: "true"

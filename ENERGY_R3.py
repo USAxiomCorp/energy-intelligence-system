@@ -1301,7 +1301,6 @@ if __name__ == "__main__":
     # STEP 1: Import Module 1 (Axioms + Registry)
     # ============================================================
     
-    # In production, this would be: from module_1_axioms import *
     # For demonstration, we recreate the key components
     
     # Initialize from Module 1

@@ -2528,6 +2528,7 @@ def compress(self, system_state):
           f"{len(compressed['primitives'])} primitives, " +
           f"{len(compressed['concepts'])} concepts")
     return compressed
+
     
     def verify(self, compressed):
         """

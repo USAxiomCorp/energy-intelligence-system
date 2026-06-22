@@ -1,0 +1,3 @@
+# ENERGY R3 Intelligence System
+# NO IMPORTS NEEDED - PURE WAD ARITHMETIC
+# This file is intentionally empty

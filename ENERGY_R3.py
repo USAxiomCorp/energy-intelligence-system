@@ -1304,8 +1304,6 @@ if __name__ == "__main__":
     # In production, this would be: from module_1_axioms import *
     # For demonstration, we recreate the key components
     
-    from module_1_axioms import MetaRoot, create_energy_axioms, AxiomRegistry
-    
     # Initialize from Module 1
     print("\n[LOADING MODULE 1]")
     meta_root = MetaRoot()

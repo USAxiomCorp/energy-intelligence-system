@@ -3,6 +3,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt || echo "No dependencies"
 COPY ENERGY_R3.py .
+COPY module_1_axioms.py .
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 CMD ["python", "ENERGY_R3.py"]

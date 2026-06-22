@@ -2490,61 +2490,44 @@ class R3Cycle:
         self.best_coherence = 0.0
         self.improvement_rate = 0.0
     
-    def compress(self, system_state):
-        """
-        STEP 1: COMPRESS
-        ================
-        
-        Reduce system state to essential components.
-        """
-        print("\n  [R3: COMPRESS]")
-        
-        compressed = {
-            "axioms": [],
-            "primitives": [],
-            "concepts": [],
-            "meta_state": {}
+def compress(self, system_state):
+    print("\n  [R3: COMPRESS]")
+    compressed = {
+        "axioms": [],
+        "primitives": [],
+        "concepts": [],
+        "meta_state": {}
+    }
+    for axiom_id in self.axiom_registry.axioms:
+        axiom = self.axiom_registry.axioms[axiom_id]
+        compressed["axioms"].append({
+            "id": axiom_id,
+            "verified": axiom.verified if hasattr(axiom, 'verified') else axiom.get('verified', 0),
+            "charge": axiom.metaphysical_charge if hasattr(axiom, 'metaphysical_charge') else axiom.get('metaphysical_charge', 0)
+        })
+    for prim_id in self.reasoning_engine.primitives:
+        primitive = self.reasoning_engine.primitives[prim_id]
+        compressed["primitives"].append({
+            "id": prim_id,
+            "available": primitive.verified if hasattr(primitive, 'verified') else primitive.get('verified', 0)
+        })
+    for con_id in self.reasoning_engine.concepts:
+        concept = self.reasoning_engine.concepts[con_id]
+        compressed["concepts"].append({
+            "id": con_id,
+            "built": concept.built if hasattr(concept, 'built') else concept.get('built', 0)
+        })
+    if self.meta_system:
+        summary = self.meta_system.get_summary()
+        compressed["meta_state"] = {
+            "coherence": summary.get("current_coherence", 0.0),
+            "stability": summary.get("stability_ratio", 0.0),
+            "grounding_strength": summary.get("grounding_strength", 0.0)
         }
-        
-        # Compress axioms (keep only IDs and verification status)
-        for axiom_id in self.axiom_registry.axioms:
-            axiom = self.axiom_registry.axioms[axiom_id]
-            compressed["axioms"].append({
-                "id": axiom_id,
-                "verified": axiom.verified,
-                "charge": axiom.metaphysical_charge
-            })
-        
-        # Compress primitives (keep only IDs and availability)
-        for prim_id in self.reasoning_engine.primitives:
-            primitive = self.reasoning_engine.primitives[prim_id]
-            compressed["primitives"].append({
-                "id": prim_id,
-                "available": primitive.verified
-            })
-        
-        # Compress concepts (keep only IDs and build status)
-        for con_id in self.reasoning_engine.concepts:
-            concept = self.reasoning_engine.concepts[con_id]
-            compressed["concepts"].append({
-                "id": con_id,
-                "built": concept.built
-            })
-        
-        # Compress meta-state (key metrics only)
-        if self.meta_system:
-            summary = self.meta_system.get_summary()
-            compressed["meta_state"] = {
-                "coherence": summary.get("current_coherence", 0.0),
-                "stability": summary.get("stability_ratio", 0.0),
-                "grounding_strength": summary.get("grounding_strength", 0.0)
-            }
-        
-        print(f"    Compressed {len(compressed['axioms'])} axioms, " +
-              f"{len(compressed['primitives'])} primitives, " +
-              f"{len(compressed['concepts'])} concepts")
-        
-        return compressed
+    print(f"    Compressed {len(compressed['axioms'])} axioms, " +
+          f"{len(compressed['primitives'])} primitives, " +
+          f"{len(compressed['concepts'])} concepts")
+    return compressed
     
     def verify(self, compressed):
         """

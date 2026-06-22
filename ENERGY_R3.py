@@ -2462,8 +2462,7 @@ class KernelStorage:
 # =============================================================================
 # SECTION 2: R3 CYCLE - COMPRESS → VERIFY → STORE → RESYNTHESIZE → REINFORCE
 # =============================================================================
-
-           class R3Cycle:
+class R3Cycle:
     """
     R3 CYCLE - RECURSIVE RESONANCE REINFORCEMENT
     =============================================
